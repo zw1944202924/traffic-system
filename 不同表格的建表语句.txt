@@ -1,0 +1,178 @@
+CREATE TABLE `ods_realtime_traffic_flow` (
+  `link_ID` text,
+  `date` text,
+  `time_interval` text,
+  `travel_time` double DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+
+
+
+---ods_realtime_traffic_flow（hive）建表语句-----
+
+CREATE TABLE IF NOT EXISTS `ods_realtime_traffic_flow`(
+    `link_ID` string COMMENT'道路ID',
+    `time_interval` int COMMENT'时间片段',
+    `travel_time` float COMMENT'车流量',
+ )comment'实时交通车流量表'partitioned by(
+    date string
+ )stored as parquet;
+-----------------------------------------
+
+-----ods_link_info（hive）建表语句-----
+
+create table if not exists `ods_link_info`(
+    `link_ID` string comment '道路ID',
+    `length` int comment '道路长度',
+    `width` int comment '道路宽度',
+    `link_class` string
+)comment '道路信息表'
+stored as textfile
+-----------------------------
+
+
+----ods_link_pint_relation(hive)建表语句----
+
+create table if not exists `ods_link_pint_relation`(
+    `link_ID` string comment '道路ID',
+    `in_links` string comment '上游道路ID',
+    `out_links` string comment '下游道路ID',
+    `pint` string comment '监控点ID',
+)comment '道路上下游关系及监控点表'
+stored as textfile
+------------------------------
+
+
+------------ods_car_info(hive)建表语句---------------------------
+create table if not exists `ods_car_info`(
+  `Uniq Id` string,
+  `Crawl Timestamp` string,
+  `Pageurl` string,
+  `Country` string,
+  `Make` string,
+  `Model Name` string,
+  `Mileage` string,
+  `First Registration` string,
+  `Power` string,
+  `Type` string,
+  `Body Type` string
+)comment '车辆信息表'
+stored as textfile
+---------------------------
+
+
+
+-------------ods_history_accident_info(hive)建表语句-------
+create table if not exists `ods_history_accident_info`(
+  `CRASH_TIME` string COMMENT '发生时间',
+  `BOROUGH` string COMMENT '自治市镇',
+  `ZIP CODE` string COMMENT '邮政编码',
+  `LATITUDE` float COMMENT '纬度',
+  `LONGITUDE` float COMMENT '经度',
+  `LOCATION` string COMMENT '地点',
+  `ON STREET NAME` string '街道名称',
+  `CROSS STREET NAME` string '十字路口名称',
+  `OFF STREET NAME` string  '街边名称',
+  `NUMBER_OF_PERSONS_INJURED` int '受伤人数',
+  `NUMBER_OF_PERSONS_KILLED` int,
+  `NUMBER_OF_PEDESTRIANS_INJURED` int ,
+  `NUMBER_OF_PEDESTRIANS_KILLED` int ,
+  `NUMBER_OF_CYCLIST_INJURED` int,
+  `NUMBER_OF_CYCLIST_KILLED` int,
+  `NUMBER_OF_MOTORIST_INJURED` int,
+  `NUMBER_OF_MOTORIST_KILLED` int,
+  `CONTRIBUTING FACTOR VEHICLE 1` string,
+  `CONTRIBUTING FACTOR VEHICLE 2` string,
+  `CONTRIBUTING FACTOR VEHICLE 3` string,
+  `CONTRIBUTING FACTOR VEHICLE 4` string,
+  `CONTRIBUTING FACTOR VEHICLE 5` string,
+  `COLLISION_ID` int,
+  `VEHICLE TYPE CODE 1` string,
+  `VEHICLE TYPE CODE 2` string,
+  `VEHICLE TYPE CODE 3` string,
+  `VEHICLE TYPE CODE 4` string,
+  `VEHICLE TYPE CODE 5` string,
+)comment'道路历史交通事故信息表'
+partitioned by (
+  `CRASH_DATE` string
+)
+store as parquet;
+
+--------------------------------------------------------------
+
+-------------------dwd_road_damage(mysql)建表语句-------------
+
+CREATE TABLE `dwd_road_damage` (
+  `link` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '道路id',
+  `pint` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '监控点id',
+  `link_damage_statue` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '道路损坏状态',
+  `pint_damager_status` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '监控点损坏状态',
+  `accident_occur_time` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '损坏发生时间',
+  `priority` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '损坏严重程度'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='道路损坏情况'
+
+
+---------------------------------------------------------------
+
+------------------------------dwd_pint_link_accident（mysql）建表语句--------------------
+CREATE TABLE `dwd_pint_link_accident` (
+  `pint` text,
+  `link_ID` text,
+  `persion_injure` bigint DEFAULT NULL,
+  `presion_kill` bigint DEFAULT NULL,
+  `date` text,
+  `time` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+-------------------------------------------------------------------------------------------------
+
+
+---------------------dwd_pint_day_flow（mysql）建表语句------------------
+CREATE TABLE `dwd_pint_day_flow` (
+  `pint` text,
+  `before_pint` text,
+  `after_pint` text,
+  `flow` double DEFAULT NULL,
+  `before_flow` text,
+  `after_flow` text,
+  `before_sum_flow` double DEFAULT NULL,
+  `after_sum_flow` double DEFAULT NULL,
+  `date` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+----------------------------------------------------------------------------------
+
+
+
+
+----------------------abs_car_inspection（mysql）建表语句---------------------
+
+CREATE TABLE `abs_car_inspection` (
+  `pint` text,
+  `before_pint` text,
+  `after_pint` text,
+  `flow` double DEFAULT NULL,
+  `before_flow` text,
+  `after_flow` text,
+  `before_sum_flow` double DEFAULT NULL,
+  `after_sum_flow` double DEFAULT NULL,
+  `date` text,
+  `link_ID` text,
+  `in_links` text,
+  `out_links` text,
+  `length` bigint DEFAULT NULL,
+  `width` bigint DEFAULT NULL,
+  `link_class` bigint DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+--------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
